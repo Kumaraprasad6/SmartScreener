@@ -16,7 +16,7 @@ struct TotalActivityReport: DeviceActivityReportScene {
     let content: (ActivityReport) -> TotalActivityView
 
     func makeConfiguration(representing data: DeviceActivityResults<DeviceActivityData>) async -> ActivityReport {
-        var entryDict: [String: (entry: AppUsageEntry, duration: TimeInterval)] = [:]
+        var entryDict: [String: AppUsageEntry] = [:]
 
         for await activityData in data {
             for await segment in activityData.activitySegments {
@@ -27,31 +27,28 @@ struct TotalActivityReport: DeviceActivityReportScene {
                         let duration = appActivity.totalActivityDuration
 
                         if let existing = entryDict[bundleId] {
-                            // Bundle ID already exists, add to duration
                             let mergedEntry = AppUsageEntry(
-                                bundleIdentifier: existing.entry.bundleIdentifier,
-                                displayName: existing.entry.displayName,
+                                bundleIdentifier: existing.bundleIdentifier,
+                                displayName: existing.displayName,
                                 duration: existing.duration + duration,
-                                categoryIdentifier: existing.entry.categoryIdentifier
+                                categoryIdentifier: existing.categoryIdentifier
                             )
-                            entryDict[bundleId] = (entry: mergedEntry, duration: existing.duration + duration)
+                            entryDict[bundleId] = mergedEntry
                         } else {
-                            // New bundle ID, create entry
                             let entry = AppUsageEntry(
                                 bundleIdentifier: bundleId,
                                 displayName: appActivity.application.localizedDisplayName ?? "Unknown",
                                 duration: duration,
                                 categoryIdentifier: categoryName
                             )
-                            entryDict[bundleId] = (entry: entry, duration: duration)
+                            entryDict[bundleId] = entry
                         }
                     }
                 }
             }
         }
 
-        // Extract entries from dictionary and sort
-        let entries = entryDict.values.map { $0.entry }.sorted { $0.duration > $1.duration }
+        let entries = entryDict.values.sorted { $0.duration > $1.duration }
 
         let payload = DailyUsagePayload(
             date: DateFormatter.isoDate.string(from: Date()),
