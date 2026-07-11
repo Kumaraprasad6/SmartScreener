@@ -1,10 +1,6 @@
 import DeviceActivity
 import SwiftUI
 
-private extension DeviceActivityReport.Context {
-    static let totalActivity = Self("TotalActivity")
-}
-
 struct DashboardView: View {
     let viewModel: DashboardViewModel
 

@@ -1,12 +1,38 @@
-import SwiftData
+import FamilyControls
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
+    let screenTimeService: any ScreenTimeServiceProtocol
+    let persistenceService: any PersistenceServiceProtocol
+
+    @State private var isAuthorized: Bool
+    @State private var viewModel: DashboardViewModel
+
+    init(
+        screenTimeService: some ScreenTimeServiceProtocol,
+        persistenceService: some PersistenceServiceProtocol
+    ) {
+        self.screenTimeService = screenTimeService
+        self.persistenceService = persistenceService
+        _isAuthorized = State(initialValue: AuthorizationCenter.shared.authorizationStatus == .approved)
+        _viewModel = State(initialValue: DashboardViewModel(
+            screenTimeService: screenTimeService,
+            persistenceService: persistenceService,
+            insightsEngine: PlaceholderInsightsEngine()
+        ))
+    }
 
     var body: some View {
+        if isAuthorized {
+            mainTabView
+        } else {
+            OnboardingView { isAuthorized = true }
+        }
+    }
+
+    private var mainTabView: some View {
         TabView {
-            DashboardView(viewModel: makeDashboardViewModel())
+            DashboardView(viewModel: viewModel)
                 .tabItem { Label("Today", systemImage: "clock.fill") }
 
             InsightsView()
@@ -22,22 +48,4 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gear") }
         }
     }
-
-    private func makeDashboardViewModel() -> DashboardViewModel {
-        DashboardViewModel(
-            screenTimeService: ScreenTimeService(),
-            persistenceService: PersistenceService(modelContext: modelContext),
-            insightsEngine: StubInsightsEngine()
-        )
-    }
-}
-
-private struct StubInsightsEngine: InsightsEngineProtocol {
-    func generateInsight(from usage: [DailyAppUsage]) async -> String { "" }
-    func generateSuggestions(timeSaved: TimeInterval) async -> [String] { [] }
-}
-
-#Preview {
-    ContentView()
-        .modelContainer(for: DailyAppUsage.self, inMemory: true)
 }

@@ -1,19 +1,23 @@
-//
-//  ScreenTimeAIApp.swift
-//  ScreenTimeAI
-//
-//  Created by T0240U6 on 11/07/26.
-//
-
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct ScreenTimeAIApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
         .modelContainer(for: DailyAppUsage.self)
+    }
+}
+
+struct RootView: View {
+    @Environment(\.modelContext) private var modelContext
+
+    var body: some View {
+        ContentView(
+            screenTimeService: ScreenTimeService(),
+            persistenceService: PersistenceService(modelContext: modelContext)
+        )
     }
 }

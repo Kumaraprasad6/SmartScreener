@@ -35,6 +35,7 @@ targets:
       - target: DeviceActivityReportExtension
         embed: true
         codeSign: true
+      - sdk: DeviceActivity.framework
     preBuildScripts:
       - name: SwiftLint
         script: |
@@ -51,6 +52,8 @@ targets:
     sources:
       - path: DeviceActivityReportExtension
       - path: Shared
+    dependencies:
+      - sdk: DeviceActivity.framework
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.stella.ScreenTimeAI.DeviceActivityReportExtension

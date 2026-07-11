@@ -36,7 +36,6 @@ final class DashboardViewModel {
             totalDuration = stored.reduce(0) { $0 + $1.duration }
             topApps = Array(stored.sorted { $0.duration > $1.duration }.prefix(3))
         } catch {
-            // Phase 3: surface error state to UI
         }
     }
 }

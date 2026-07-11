@@ -2,10 +2,6 @@ import DeviceActivity
 import Foundation
 import SwiftUI
 
-extension DeviceActivityReport.Context {
-    static let totalActivity = Self("TotalActivity")
-}
-
 struct ActivityReport {
     let apps: [AppUsageEntry]
     var totalDuration: TimeInterval { apps.reduce(0) { $0 + $1.duration } }
