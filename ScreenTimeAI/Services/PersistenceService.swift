@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+@MainActor
 final class PersistenceService: PersistenceServiceProtocol {
     private let modelContext: ModelContext
 

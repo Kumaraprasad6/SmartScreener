@@ -15,6 +15,12 @@ final class PersistenceServiceTests: XCTestCase {
         service = PersistenceService(modelContext: container.mainContext)
     }
 
+    override func tearDown() async throws {
+        service = nil
+        container = nil
+        try await super.tearDown()
+    }
+
     func testSaveAndFetchByDate() async throws {
         let date = Calendar.current.startOfDay(for: Date())
         let usage = DailyAppUsage(
