@@ -29,6 +29,11 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        CODE_SIGN_ENTITLEMENTS: ScreenTimeAI/ScreenTimeAI.entitlements
+    dependencies:
+      - target: DeviceActivityReportExtension
+        embed: true
+        codeSign: true
     preBuildScripts:
       - name: SwiftLint
         script: |
@@ -38,3 +43,36 @@ targets:
             echo "warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint"
           fi
         basedOnDependencyAnalysis: false
+
+  DeviceActivityReportExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: DeviceActivityReportExtension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.stella.ScreenTimeAI.DeviceActivityReportExtension
+        CODE_SIGN_ENTITLEMENTS: DeviceActivityReportExtension/DeviceActivityReportExtension.entitlements
+    info:
+      path: DeviceActivityReportExtension/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.deviceactivityreport.extension
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ReportExtension
+
+schemes:
+  ScreenTimeAI:
+    build:
+      targets:
+        ScreenTimeAI: all
+        DeviceActivityReportExtension: [build]
+    run:
+      config: Debug
+    test:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release
