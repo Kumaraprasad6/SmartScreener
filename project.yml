@@ -20,6 +20,7 @@ targets:
       - path: ScreenTimeAI
         excludes:
           - "**/*.example"
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.stella.ScreenTimeAI
@@ -49,6 +50,7 @@ targets:
     platform: iOS
     sources:
       - path: DeviceActivityReportExtension
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.stella.ScreenTimeAI.DeviceActivityReportExtension
@@ -60,16 +62,32 @@ targets:
           NSExtensionPointIdentifier: com.apple.deviceactivityreport.extension
           NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).ReportExtension
 
+  ScreenTimeAITests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: ScreenTimeAITests
+    dependencies:
+      - target: ScreenTimeAI
+        embed: false
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.stella.ScreenTimeAITests
+        GENERATE_INFOPLIST_FILE: YES
+
 schemes:
   ScreenTimeAI:
     build:
       targets:
         ScreenTimeAI: all
         DeviceActivityReportExtension: [build]
+        ScreenTimeAITests: [test]
     run:
       config: Debug
     test:
       config: Debug
+      targets:
+        - ScreenTimeAITests
     profile:
       config: Release
     analyze:
