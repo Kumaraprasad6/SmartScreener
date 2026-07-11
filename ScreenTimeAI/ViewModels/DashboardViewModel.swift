@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import os
 
 @Observable
 @MainActor
@@ -36,6 +37,7 @@ final class DashboardViewModel {
             totalDuration = stored.reduce(0) { $0 + $1.duration }
             topApps = Array(stored.sorted { $0.duration > $1.duration }.prefix(3))
         } catch {
+            os_log(.error, "DashboardViewModel.loadToday failed: %{public}@", error.localizedDescription)
         }
     }
 }

@@ -13,10 +13,11 @@ struct ScreenTimeAIApp: App {
 
 struct RootView: View {
     @Environment(\.modelContext) private var modelContext
+    @State private var screenTimeService = ScreenTimeService()
 
     var body: some View {
         ContentView(
-            screenTimeService: ScreenTimeService(),
+            screenTimeService: screenTimeService,
             persistenceService: PersistenceService(modelContext: modelContext)
         )
     }

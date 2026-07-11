@@ -1,6 +1,7 @@
 import DeviceActivity
 import Foundation
 import SwiftUI
+import os
 
 struct ActivityReport {
     let apps: [AppUsageEntry]
@@ -50,7 +51,11 @@ struct TotalActivityReport: DeviceActivityReportScene {
             date: DateFormatter.isoDate.string(from: Date()),
             apps: entries
         )
-        try? AppGroupStore.write(payload)
+        do {
+            try AppGroupStore.write(payload)
+        } catch {
+            os_log(.error, "AppGroupStore.write failed: %{public}@", error.localizedDescription)
+        }
 
         return ActivityReport(apps: entries)
     }
