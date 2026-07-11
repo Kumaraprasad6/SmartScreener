@@ -14,3 +14,6 @@ DerivedData/
 docs/superpowers/
 .claude/
 CLAUDE.md
+
+# Re-allow project-level markdown (overrides global *.md rule)
+!README.md
