@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct ScreenTimeAIApp: App {
@@ -13,5 +14,6 @@ struct ScreenTimeAIApp: App {
         WindowGroup {
             ContentView()
         }
+        .modelContainer(for: DailyAppUsage.self)
     }
 }
