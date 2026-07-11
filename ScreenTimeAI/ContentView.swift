@@ -1,16 +1,12 @@
-//
-//  ContentView.swift
-//  ScreenTimeAI
-//
-//  Created by T0240U6 on 11/07/26.
-//
-
+import SwiftData
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+
     var body: some View {
         TabView {
-            DashboardView()
+            DashboardView(viewModel: makeDashboardViewModel())
                 .tabItem { Label("Today", systemImage: "clock.fill") }
 
             InsightsView()
@@ -26,8 +22,22 @@ struct ContentView: View {
                 .tabItem { Label("Settings", systemImage: "gear") }
         }
     }
+
+    private func makeDashboardViewModel() -> DashboardViewModel {
+        DashboardViewModel(
+            screenTimeService: ScreenTimeService(),
+            persistenceService: PersistenceService(modelContext: modelContext),
+            insightsEngine: StubInsightsEngine()
+        )
+    }
+}
+
+private struct StubInsightsEngine: InsightsEngineProtocol {
+    func generateInsight(from usage: [DailyAppUsage]) async -> String { "" }
+    func generateSuggestions(timeSaved: TimeInterval) async -> [String] { [] }
 }
 
 #Preview {
     ContentView()
+        .modelContainer(for: DailyAppUsage.self, inMemory: true)
 }

@@ -2,6 +2,7 @@ import Foundation
 import Observation
 
 @Observable
+@MainActor
 final class DashboardViewModel {
     var totalDuration: TimeInterval = 0
     var topApps: [DailyAppUsage] = []
@@ -23,6 +24,19 @@ final class DashboardViewModel {
     }
 
     func loadToday() async {
-        // Phase 1: implement real data fetch
+        isLoading = true
+        defer { isLoading = false }
+        do {
+            let today = Date()
+            let freshUsage = try await screenTimeService.fetchDailyUsage(for: today)
+            if !freshUsage.isEmpty {
+                try await persistenceService.save(freshUsage)
+            }
+            let stored = try await persistenceService.fetchUsage(for: today)
+            totalDuration = stored.reduce(0) { $0 + $1.duration }
+            topApps = Array(stored.sorted { $0.duration > $1.duration }.prefix(3))
+        } catch {
+            // Phase 3: surface error state to UI
+        }
     }
 }
